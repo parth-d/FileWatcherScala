@@ -7,16 +7,8 @@ object Driver extends App {
   //    val map = new util.HashMap[String, String]
   val watcher = new FileWatcher(folder)
   watcher.addListener(new FileAdapter() {
-    override def onCreated(event: FileEvent): Unit = {
-      System.out.println("Created " + new Date(event.getFile.lastModified))
-    }
-
     override def onModified(event: FileEvent): Unit = {
       System.out.println("Modified " + new Date(event.getFile.lastModified))
-    }
-
-    override def onDeleted(event: FileEvent): Unit = {
-      System.out.println("Deleted " + new Date(System.currentTimeMillis()))
     }
   }).watch()
 
@@ -31,7 +23,5 @@ object Driver extends App {
     } finally if (writer != null) writer.close()
   }
   Thread.sleep(500)
-//  file.delete()
-//  Thread.sleep(500)
   System.out.println("Final: " + new Date(file.lastModified()))
 }

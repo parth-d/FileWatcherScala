@@ -1,16 +1,9 @@
+import java.io.{File, IOException}
 import java.nio.file.StandardWatchEventKinds._
-import java.io.File
-import java.io.IOException
-import java.nio.file.ClosedWatchServiceException
-import java.nio.file.FileSystems
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.WatchEvent
-import java.nio.file.WatchKey
-import scala.collection.JavaConverters._
-import java.nio.file.WatchService
+import java.nio.file._
 import java.util
-import java.util.{ArrayList, Collections, List}
+import java.util.Collections
+import scala.jdk.CollectionConverters._
 
 
 object FileWatcher {
@@ -35,7 +28,7 @@ class FileWatcher(val folder: File) extends Runnable {
       val watchService = FileSystems.getDefault.newWatchService
       try {
         val path = Paths.get(folder.getAbsolutePath)
-        path.register(watchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE)
+        path.register(watchService, ENTRY_MODIFY)
         FileWatcher.watchServices.add(watchService)
         var poll = true
         while ( {
@@ -60,22 +53,10 @@ class FileWatcher(val folder: File) extends Runnable {
 
   protected def notifyListeners(kind: WatchEvent.Kind[_], file: File): Unit = {
     val event = new FileEvent(file)
-    if (kind eq ENTRY_CREATE) {
-      for (listener <- listeners.asScala) {
-        listener.onCreated(event)
-      }
-      if (file.isDirectory) new FileWatcher(file).setListeners(listeners).watch()
-    }
-    else if (kind eq ENTRY_MODIFY) {
+    if (kind eq ENTRY_MODIFY)
       for (listener <- listeners.asScala) {
         listener.onModified(event)
       }
-    }
-    else if (kind eq ENTRY_DELETE) {
-      for (listener <- listeners.asScala) {
-        listener.onDeleted(event)
-      }
-    }
   }
 
   def addListener(listener: FileListener): FileWatcher = {
