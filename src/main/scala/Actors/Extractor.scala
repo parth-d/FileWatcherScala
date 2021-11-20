@@ -16,7 +16,7 @@ class Extractor extends Actor {
   props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
   props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
   props.put("acks","all")
-  val producer = new KafkaProducer[Int, String](props)
+  val producer = new KafkaProducer[String, String](props)
   val topic = "test"
 
   override def receive: Receive = {
@@ -24,14 +24,14 @@ class Extractor extends Actor {
       if (!lastReadLines.contains(file.getName)) lastReadLines += (file.getName -> 0)
       val BufferedSource = Source.fromFile(file)
       val data = Files.lines(file.toPath)
-      data.skip(lastReadLines(file.getName)).forEach(println)
+      data.skip(lastReadLines(file.getName)).forEach(kafkaTry(_))
       lastReadLines(file.getName) = BufferedSource.getLines.size
-      kafkaTry()
+//      kafkaTry()
   }
 
-  def kafkaTry(): Unit = {
+  def kafkaTry(data: String): Unit = {
     try {
-      val record = new ProducerRecord(topic, 1,  "hi")
+      val record = new ProducerRecord(topic, "key",  data)
       val metadata = producer.send(record)
       printf(s"sent record(key=%s value=%s) " + "meta(partition=%d, offset=%d)\n",
         record.key(), record.value(),
@@ -41,6 +41,6 @@ class Extractor extends Actor {
     catch {
       case e: Exception => e.printStackTrace()
     }
-    finally producer.close()
+//    finally producer.close()
   }
 }
