@@ -1,3 +1,5 @@
+package FileDriver
+
 import java.io.{File, IOException}
 import java.nio.file.StandardWatchEventKinds._
 import java.nio.file._
@@ -35,7 +37,7 @@ class FileWatcher(val folder: File) extends Runnable {
           poll
         }) poll = pollEvents(watchService)
       } catch {
-        case e@(_: IOException | _: InterruptedException | _: ClosedWatchServiceException) =>
+        case _: IOException | _: InterruptedException | _: ClosedWatchServiceException =>
           Thread.currentThread.interrupt()
       } finally if (watchService != null) watchService.close()
     }
@@ -45,18 +47,16 @@ class FileWatcher(val folder: File) extends Runnable {
   protected def pollEvents(watchService: WatchService): Boolean = {
     val key = watchService.take
     val path = key.watchable.asInstanceOf[Path]
-    for (event <- key.pollEvents.asScala) {
-      notifyListeners(event.kind, path.resolve(event.context.asInstanceOf[Path]).toFile)
-    }
+    key.pollEvents.asScala
+      .foreach(event => notifyListeners(event.kind, path.resolve(event.context.asInstanceOf[Path]).toFile))
     key.reset
   }
 
   protected def notifyListeners(kind: WatchEvent.Kind[_], file: File): Unit = {
     val event = new FileEvent(file)
     if (kind eq ENTRY_MODIFY)
-      for (listener <- listeners.asScala) {
-        listener.onModified(event)
-      }
+      listeners.asScala
+        .foreach(listener => listener.onModified(event))
   }
 
   def addListener(listener: FileListener): FileWatcher = {
