@@ -24,7 +24,8 @@ class Extractor extends Actor {
       if (!lastReadLines.contains(file.getName)) lastReadLines += (file.getName -> 0)
       val BufferedSource = Source.fromFile(file)
       val data = Files.lines(file.toPath)
-      data.skip(lastReadLines(file.getName)).forEach(kafkaTry(_))
+      //data.skip(lastReadLines(file.getName)).forEach(kafkaTry(_))
+      data.skip(lastReadLines(file.getName)).forEach(println)
       lastReadLines(file.getName) = BufferedSource.getLines.size
 //      kafkaTry()
   }

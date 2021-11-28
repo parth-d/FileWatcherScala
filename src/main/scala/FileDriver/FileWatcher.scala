@@ -15,7 +15,7 @@ object FileWatcher {
 }
 
 class FileWatcher(val folder: File) extends Runnable {
-  protected var listeners = new util.ArrayList[FileListener]
+  protected val listeners = new util.ArrayList[FileListener]
 
   def watch(): Unit = {
     if (folder.exists) {
@@ -72,7 +72,7 @@ class FileWatcher(val folder: File) extends Runnable {
   def getListeners: util.List[FileListener] = listeners
 
   def setListeners(listeners: util.ArrayList[FileListener]): FileWatcher = {
-    this.listeners = listeners
+    listeners.forEach(listener => this.listeners.add(listener))
     this
   }
 }
