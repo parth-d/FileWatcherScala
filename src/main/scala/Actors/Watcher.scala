@@ -1,6 +1,7 @@
 package Actors
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import sys.process._
 
 import java.io.File
 
@@ -17,14 +18,10 @@ class Watcher(extractor: ActorRef, file: File) extends Actor {
   }
 
   def watch(extractor: ActorRef): Unit = {
-//    //Specify the path here
-//    val folder = new File(path)
-//    val watcher = new FileWatcher(folder)
-//    watcher.addListener(new FileAdapter() {
-//      override def onModified(event: FileEvent): Unit = {
-//        extractor ! event.getFile
-//      }
-//    }).watch()
+    while (true){
+      ("wc -l " + file.getAbsolutePath).!
+      Thread.sleep(500)
+    }
   }
 }
 
