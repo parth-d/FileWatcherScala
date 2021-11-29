@@ -10,7 +10,8 @@ object Watcher {
 
 class Watcher(extractor: ActorRef, file: File) extends Actor {
   override def receive: Receive = {
-    case "watch" =>
+    case "startMonitoring" =>
+      println("Parth:\t Received startMonitoring for file " + file)
       watch(extractor)
     case _ => println("Invalid input. Please check")
   }
@@ -29,17 +30,16 @@ class Watcher(extractor: ActorRef, file: File) extends Actor {
 
 object Main extends App {
   val path = args(0)
-  println("Started with args " + args(0))
   val folder = new File(path)
-  println("Loaded folder")
   val system = ActorSystem("ActorSystem")
   var actors =  Map[File, (ActorRef, ActorRef)]()
-  println("Starting each file")
   folder.listFiles().foreach{f =>
-    println("In for file " + f.getName)
+    println("Parth:\t Creating actors for file " + f.getName)
     val extractor = system.actorOf(Extractor.props(f), name = f.getName + "Extractor")
     val watcher = system.actorOf(Watcher.props(extractor, f), name = f.getName + "Watcher")
     actors += (f -> (watcher, extractor))
   }
-  println(actors)
+  actors.foreach{entry =>
+    entry._2._1 ! "startMonitoring"
+  }
 }
