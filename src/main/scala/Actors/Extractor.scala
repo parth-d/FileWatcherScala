@@ -1,6 +1,6 @@
 package Actors
 
-import akka.actor.Actor
+import akka.actor.{Actor, Props}
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 
 import java.io.File
@@ -8,7 +8,11 @@ import java.nio.file.Files
 import java.util.Properties
 import scala.io.Source
 
-class Extractor extends Actor {
+object Extractor {
+  def props(file: File): Props = Props(new Extractor(file))
+}
+
+class Extractor(file: File) extends Actor {
   var lastReadLines: scala.collection.mutable.Map[String, Int] = scala.collection.mutable.Map[String, Int]()
   var lineCounter = 0
   val props: Properties = new Properties()
