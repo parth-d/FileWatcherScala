@@ -4,6 +4,7 @@ import FileDriver.{FileAdapter, FileEvent, FileWatcher}
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 
 import java.io.File
+import java.nio.file.Files
 
 object Watcher {
   def props(extractor: ActorRef, path: String): Props = Props(new Watcher(extractor, path))
@@ -20,6 +21,7 @@ class Watcher(extractor: ActorRef, path: String) extends Actor {
     //Specify the path here
     val folder = new File(path)
     val watcher = new FileWatcher(folder)
+    folder.listFiles().foreach(z => println(Files.lines(z.toPath).count()))
     watcher.addListener(new FileAdapter() {
       override def onModified(event: FileEvent): Unit = {
         extractor ! event.getFile

@@ -6,6 +6,7 @@ import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import java.io.File
 import java.nio.file.Files
 import java.util.Properties
+import java.util.logging.Logger
 import scala.io.Source
 
 class Extractor extends Actor {
@@ -19,13 +20,15 @@ class Extractor extends Actor {
   val producer = new KafkaProducer[String, String](props)
   val topic = "test"
 
+  val logger = Logger.getLogger(Actor.getClass.getName)
+
   override def receive: Receive = {
     case file: File =>
       if (!lastReadLines.contains(file.getName)) lastReadLines += (file.getName -> 0)
       val BufferedSource = Source.fromFile(file)
       val data = Files.lines(file.toPath)
       //data.skip(lastReadLines(file.getName)).forEach(kafkaTry(_))
-      data.skip(lastReadLines(file.getName)).forEach(println)
+      data.skip(lastReadLines(file.getName)).forEach(logger.info)
       lastReadLines(file.getName) = BufferedSource.getLines.size
 //      kafkaTry()
   }

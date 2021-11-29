@@ -1,20 +1,25 @@
 package FileDriver
 
+import FileDriver.FileWatcher.logger
+
 import java.io.{File, IOException}
 import java.nio.file.StandardWatchEventKinds._
 import java.nio.file._
 import java.util
 import java.util.Collections
+import java.util.logging.Logger
 import scala.jdk.CollectionConverters._
 
 
 object FileWatcher {
   protected val watchServices = new util.ArrayList[WatchService]
+  val logger = Logger.getLogger(FileWatcher.getClass.getName)
 
   def getWatchServices: util.List[WatchService] = Collections.unmodifiableList(watchServices)
 }
 
 class FileWatcher(val folder: File) extends Runnable {
+
   protected val listeners = new util.ArrayList[FileListener]
 
   def watch(): Unit = {
@@ -54,9 +59,11 @@ class FileWatcher(val folder: File) extends Runnable {
 
   protected def notifyListeners(kind: WatchEvent.Kind[_], file: File): Unit = {
     val event = new FileEvent(file)
-    if (kind eq ENTRY_MODIFY)
+    logger.info("Event received:" + kind.name())
+    if (kind eq ENTRY_MODIFY) {
       listeners.asScala
         .foreach(listener => listener.onModified(event))
+    }
   }
 
   def addListener(listener: FileListener): FileWatcher = {
