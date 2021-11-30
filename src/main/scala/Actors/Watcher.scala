@@ -10,6 +10,7 @@ object Watcher {
 }
 
 class Watcher(extractor: ActorRef, file: File) extends Actor {
+  var lastReadLine = 0
   override def receive: Receive = {
     case "startMonitoring" =>
       println("Parth:\t Received startMonitoring for file " + file)
@@ -19,8 +20,12 @@ class Watcher(extractor: ActorRef, file: File) extends Actor {
 
   def watch(extractor: ActorRef): Unit = {
     while (true){
-      ("wc -l " + file.getAbsolutePath).!
-      Thread.sleep(500)
+      val newLine: Int = ("wc -l " + file.getAbsolutePath).!!.toInt
+      if (newLine != lastReadLine) {
+        println("Parth:\t Changes observed, sending message to extractor " + extractor.path.name)
+        extractor ! lastReadLine + " " + newLine
+        lastReadLine = newLine
+      }
     }
   }
 }
