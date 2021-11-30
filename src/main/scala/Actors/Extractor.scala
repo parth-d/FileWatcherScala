@@ -1,21 +1,15 @@
 package Actors
 
 import akka.actor.{Actor, Props}
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 
 import java.io.File
-import sys.process._
-import java.nio.file.Files
-import java.util.Properties
-import scala.io.Source
+import scala.sys.process._
 
 object Extractor {
   def props(file: File): Props = Props(new Extractor(file))
 }
 
 class Extractor(file: File) extends Actor {
-//  var lastReadLines: scala.collection.mutable.Map[String, Int] = scala.collection.mutable.Map[String, Int]()
-//  var lineCounter = 0
 //  val props: Properties = new Properties()
 //  props.put("bootstrap.servers", "localhost:9092")
 //  props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
@@ -28,13 +22,6 @@ class Extractor(file: File) extends Actor {
     case str: String =>
                   println("Parth:\t" + self.path.name + " received: " + str)
                   kafkaTry(str)
-
-//      if (!lastReadLines.contains(file.getName)) lastReadLines += (file.getName -> 0)
-//      val BufferedSource = Source.fromFile(file)
-//      val data = Files.lines(file.toPath)
-//      data.skip(lastReadLines(file.getName)).forEach(kafkaTry(_))
-//      lastReadLines(file.getName) = BufferedSource.getLines.size
-////      kafkaTry()
   }
 
   def kafkaTry(boundaries: String): Unit = {
@@ -53,6 +40,5 @@ class Extractor(file: File) extends Actor {
 //    catch {
 //      case e: Exception => e.printStackTrace()
 //    }
-//    finally producer.close()
   }
 }
