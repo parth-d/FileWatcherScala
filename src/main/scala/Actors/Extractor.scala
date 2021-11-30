@@ -26,6 +26,8 @@ class Extractor(file: File) extends Actor {
   override def receive: Receive = {
     case str: String =>
                   println("Parth:\t" + self.path.name + " received: " + str)
+                  kafkaTry(str)
+
 //      if (!lastReadLines.contains(file.getName)) lastReadLines += (file.getName -> 0)
 //      val BufferedSource = Source.fromFile(file)
 //      val data = Files.lines(file.toPath)
@@ -34,7 +36,11 @@ class Extractor(file: File) extends Actor {
 ////      kafkaTry()
   }
 
-//  def kafkaTry(data: String): Unit = {
+  def kafkaTry(boundaries: String): Unit = {
+    val firstLine: Int = boundaries.split(" ")(0).toInt + 1
+    val lastLine: Int  = boundaries.split(" ")(1).toInt
+    val data: String = s"sed -n '$firstLine,$lastLine p' ${file.getAbsolutePath}"
+    println(data)
 //    try {
 //      val record = new ProducerRecord(topic, "key",  data)
 //      val metadata = producer.send(record)
@@ -46,6 +52,6 @@ class Extractor(file: File) extends Actor {
 //    catch {
 //      case e: Exception => e.printStackTrace()
 //    }
-////    finally producer.close()
-//  }
+//    finally producer.close()
+  }
 }
