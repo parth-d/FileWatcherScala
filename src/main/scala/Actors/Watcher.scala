@@ -37,8 +37,8 @@ object Main extends App {
   var actors =  Map[File, (ActorRef, ActorRef)]()
   folder.listFiles().foreach{f =>
     println("Parth:\t Creating actors for file " + f.getName)
-    val extractor = system.actorOf(Extractor.props(f), name = "Extractor[" + f.getName + "]")
-    val watcher = system.actorOf(Watcher.props(extractor, f), name = "Watcher[" + f.getName + "]")
+    val extractor = system.actorOf(Extractor.props(f), name = "Extractor_" + f.getName)
+    val watcher = system.actorOf(Watcher.props(extractor, f), name = "Watcher_" + f.getName)
     actors += (f -> (watcher, extractor))
   }
   actors.foreach{entry =>
