@@ -20,7 +20,7 @@ class Watcher(extractor: ActorRef, file: File) extends Actor {
 
   def watch(extractor: ActorRef): Unit = {
     while (true){
-      val newLine: Int = ("wc -l " + file.getAbsolutePath).!!.toInt
+      val newLine: Int = ("wc -l " + file.getAbsolutePath).!!.split(" ")(0).toInt
       if (newLine != lastReadLine) {
         println("Parth:\t Changes observed, sending message to extractor " + extractor.path.name)
         extractor ! lastReadLine + " " + newLine
