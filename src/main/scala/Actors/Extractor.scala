@@ -1,15 +1,13 @@
 package Actors
 
 import akka.actor.{Actor, Props}
-import constants.{AppConstants, KafkaConstants, ShellCommands}
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
+import constants.KafkaConstants
+import org.apache.kafka.clients.producer.KafkaProducer
 import service.ExtractorService
-import sun.util.resources.cldr.kam.CalendarData_kam_KE
 
 import java.io.File
 import java.util.Properties
 import java.util.logging.Logger
-import scala.sys.process._
 
 object Extractor {
   def props(file: File): Props = Props(new Extractor(file))
