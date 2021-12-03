@@ -2,7 +2,7 @@ package Actors
 
 import Watcher._
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
-import constants.AppConstants
+import constants.{ActorConstants, AppConstants, ShellCommands}
 import constants.AppConstants.START_MONITORING
 
 import java.io.File
@@ -28,7 +28,7 @@ class Watcher(extractor: ActorRef, file: File) extends Actor {
 
   @tailrec
   private def watch(extractor: ActorRef, lastReadLine: Int): Unit = {
-    val newLine: Int = ("wc -l " + file.getAbsolutePath).!!.split(" ")(0).toInt
+    val newLine: Int = (ShellCommands.wc + file.getAbsolutePath).!!.split(" ")(0).toInt
     if (newLine != lastReadLine) {
       logger.info("Changes observed, sending message to extractor " + extractor.path.name)
       extractor ! lastReadLine + " " + newLine
@@ -45,8 +45,8 @@ object Main extends App {
   val logger : Logger = Logger.getLogger(this.getClass.getName)
   folder.listFiles().foreach { f =>
     logger.info("Creating actors for file " + f.getName)
-    val extractor = system.actorOf(Extractor.props(f), name = "Extractor_" + f.getName)
-    val watcher = system.actorOf(Watcher.props(extractor, f), name = "Watcher_" + f.getName)
+    val extractor = system.actorOf(Extractor.props(f), name = ActorConstants.extractorSubName + f.getName)
+    val watcher = system.actorOf(Watcher.props(extractor, f), name = ActorConstants.watcherSubName + f.getName)
     actors += (f -> (watcher, extractor))
   }
   actors.foreach { entry =>
