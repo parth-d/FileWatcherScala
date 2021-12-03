@@ -23,14 +23,15 @@ class ExtractorService {
   def kafkaTry(boundaries: String, file: File): Unit = {
     val firstLine: Int = boundaries.split(" ")(0).toInt + 1
     val lastLine: Int  = boundaries.split(" ")(1).toInt
-    val data: String = s"${ShellCommands.sed} '$firstLine,$lastLine p' ${file.getAbsolutePath}".!!
-    println(data.split("\n").mkString("Array(", ", ", ")"))
-    try {
-      val record = new ProducerRecord(topic, "key", data)
-      producer.send(record)
-    }
-    catch {
-      case e: Exception => e.printStackTrace()
+    val data: Array[String] = s"${ShellCommands.sed} '$firstLine,$lastLine p' ${file.getAbsolutePath}".!!.split("\n")
+    data.foreach{line =>
+      try {
+        val record = new ProducerRecord(topic, "key", line)
+        producer.send(record)
+      }
+      catch {
+        case e: Exception => e.printStackTrace()
+      }
     }
   }
 }
