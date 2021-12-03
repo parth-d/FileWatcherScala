@@ -26,6 +26,7 @@ class ExtractorService {
     val data: String = s"${ShellCommands.sed} '$firstLine,$lastLine p' ${file.getAbsolutePath}".!!
     try {
       val record = new ProducerRecord(topic, "key", data)
+      logger.info(data)
       producer.send(record)
     }
     catch {
