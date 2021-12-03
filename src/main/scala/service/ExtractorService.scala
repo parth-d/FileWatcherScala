@@ -27,7 +27,7 @@ class ExtractorService {
     try {
       val record = new ProducerRecord(topic, "key", data)
       logger.info(data)
-//      producer.send(record)
+      producer.send(record)
     }
     catch {
       case e: Exception => e.printStackTrace()
