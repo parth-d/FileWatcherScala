@@ -30,6 +30,7 @@ class Extractor(extractorService: ExtractorService, file: File) extends Actor {
       extractorService.getData(str, file).foreach{line =>
         try {
           val record = new ProducerRecord(topic, "key", line)
+          logger.log(Level.FINEST, line)
           producer.send(record)
         }
         catch {
