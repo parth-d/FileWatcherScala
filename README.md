@@ -13,6 +13,7 @@ This repository monitors and extracts the real-time file changes in the observed
 [info] Tests: succeeded 4, failed 0, canceled 0, ignored 0, pending 0
 [info] All tests passed.
 ```
+4. To run the code without publishing to a Kafka topic, checkout `wo-kafka` branch.
 
 ## Project Flow
 1. Driver code spawns 2 connected actors: `Watcher` & `Extractor` for each file in the directory specified as a runtime argument
