@@ -1,8 +1,15 @@
 package Actors
 
-import org.scalatest.{BeforeAndAfter, Inside, Inspectors, OptionValues}
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should
+import akka.actor.ActorSystem
+import akka.testkit.{ImplicitSender, TestKit}
+import org.scalamock.scalatest.MockFactory
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class ActorBaseSpec extends AnyFlatSpec with should.Matchers with OptionValues with Inside with Inspectors with BeforeAndAfter {
+class ActorBaseSpec extends TestKit(ActorSystem("MySpec")) with ImplicitSender
+with AnyWordSpecLike
+with Matchers
+with BeforeAndAfterAll
+with MockFactory {
 }

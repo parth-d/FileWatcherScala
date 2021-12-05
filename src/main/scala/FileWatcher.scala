@@ -2,6 +2,7 @@ import Actors.{Extractor, Watcher}
 import akka.actor.{ActorRef, ActorSystem}
 import constants.AppConstants.START_MONITORING
 import constants.{ActorConstants, AppConstants}
+import service.{ExtractorService, WatcherService}
 
 import java.io.File
 import java.util.logging.Logger
@@ -20,8 +21,10 @@ object FileWatcher {
 
     folder.listFiles().foreach { f =>
       logger.info("Creating actors for file " + f.getName)
-      val extractor = system.actorOf(Extractor.props(f), name = ActorConstants.extractorSubName + f.getName)
-      val watcher = system.actorOf(Watcher.props(extractor, f), name = ActorConstants.watcherSubName + f.getName)
+      val watcherService = new WatcherService
+      val extractorService = new ExtractorService
+      val extractor = system.actorOf(Extractor.props(extractorService, f), name = ActorConstants.extractorSubName + f.getName)
+      val watcher = system.actorOf(Watcher.props(watcherService, extractor, f), name = ActorConstants.watcherSubName + f.getName)
       actors += (f -> (watcher, extractor))
     }
 

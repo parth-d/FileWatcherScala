@@ -13,6 +13,8 @@ resolvers += "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releas
 
 libraryDependencies += "com.typesafe" % "config" % typesafeConfigVersion
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % AkkaVersion
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % AkkaVersion % Test
 libraryDependencies += "org.apache.kafka" % "kafka-clients" % kafkaVersion
 libraryDependencies += "org.scalatest" %% "scalatest" % scalacticVersion % Test
 libraryDependencies += "org.scalatest" %% "scalatest-featurespec" % scalacticVersion % Test
+libraryDependencies += "org.scalamock" %% "scalamock" % "5.1.0" % Test

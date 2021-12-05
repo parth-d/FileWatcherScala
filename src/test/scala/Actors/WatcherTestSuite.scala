@@ -1,5 +1,0 @@
-package Actors
-
-class WatcherTestSuite {
-
-}
