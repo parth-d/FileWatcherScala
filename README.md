@@ -40,3 +40,8 @@ This repository monitors and extracts the real-time file changes in the observed
    4. Clone this repo and to the project root directory and execute `sbt run path/to/dir`
 
 ### Youtube video: [link](https://youtu.be/TDNmTYhNl1E)
+
+## Troubleshooting
+1. Make sure the directory path passed as runtime argument exists
+2. This path is provided as a relative path
+3. This project isn't compatible with non-Unix based OS
